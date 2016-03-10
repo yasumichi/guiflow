@@ -1,0 +1,28 @@
+{
+  "name": "guiflow",
+  "version": "0.0.1",
+  "description": "a text editor",
+  "main": "index.js",
+  "scripts": {
+    "exec": "node_modules/.bin/electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hirokidaichi/guiflow.git"
+  },
+  "author": "hirokidaichi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hirokidaichi/guiflow/issues"
+  },
+  "homepage": "https://github.com/hirokidaichi/guiflow",
+  "dependencies": {
+    "electron-debug": "^0.5.2",
+    "uiflow": "^1.1.0"
+  },
+  "devDependencies": {
+    "ace-min-noconflict": "^1.1.9",
+    "electron-packager": "^5.2.1",
+    "electron-prebuilt": "^0.36.9"
+  }
+}

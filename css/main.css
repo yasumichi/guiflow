@@ -1,0 +1,39 @@
+
+body {
+    background-color: #fff;
+    margin: 0;
+    padding : 0;
+}
+.container {
+    overflow : hidden;
+    height: 700px;
+}
+.text-container{
+    width : 40%;
+    height: 100%;
+    float : left;
+}
+#text {
+    width : 100%;
+    height: 100%;
+    border : 0px;
+}
+.diagram-container {
+    width : 59%;
+    height: 100%;
+    float: right;
+}
+.navigation {
+    position:fixed;
+    top: 0;
+    left : 0;
+    width : 100%;
+}
+#scale {
+    float:right;
+    padding-right:20px;
+}
+#diagram {
+    width : 100%;
+    height: 100%;
+}
