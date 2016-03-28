@@ -1,36 +1,52 @@
 var $ = require("./js/jquery-2.1.4.min");
 var fs = require("fs");
+var ipcRenderer = require("electron").ipcRenderer;
 var remote = require("remote");
 var uiflow = remote.require("./app/uiflow");
 require('ace-min-noconflict');
 require('ace-min-noconflict/theme-monokai');
 
+$(function() {
+    ipcRenderer.on("openFile", function(e) {
+        console.log(e);
+    });
+    ipcRenderer.on("saveFile", function(e) {
+        console.log(e);
+    });
 
-/*
-window.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-    menu.popup(remote.getCurrentWindow());
-}, false);*/
+});
+
+
 $(function() {
 
     $(window).on("load resize", function() {
-        $(".container").height($(window).height());
+        $(".main").height($(window).height());
         var editor = ace.edit("text");
         editor.$blockScrolling = Infinity;
         editor.setTheme("ace/theme/monokai");
         setInterval(function() {
-            uiflow.update("<anon>", editor.getValue(), "svg", "tmp.svg")
-                .catch(function(err) {
-                    console.error(err);
+            uiflow.update("<anon>", editor.getValue(), "svg")
+                .then(function(data) {
+                    editor.getSession().setAnnotations([]);
+                    $(".diagram-container").html(data);
                 })
-                .then(function() {
-                    $("#diagram").attr("data", "tmp.svg?" + Date.now());
+                .catch(function(err) {
+                    var errorInfo = err.message.split(/:/g);
+                    var fileName = errorInfo[0];
+                    var line = errorInfo[1];
+                    var text = errorInfo[3];
+                    editor.getSession().setAnnotations([{
+                        row: line,
+                        type: "error",
+                        text: text,
+                    }]);
+                    console.error(errorInfo);
                 });
+
         }, 500);
     });
     var svgElement = function() {
-        var svgDoc = document.getElementById('diagram').contentDocument;
-        return $(svgDoc).find('svg');
+        return $("svg");
     };
     var getViewBox = function(svg) {
         return svg[0].getAttribute("viewBox").split(/\s/g).map(parseFloat);
@@ -55,7 +71,8 @@ $(function() {
         setViewBox(svg, viewBoxValues);
         console.log(viewBoxValues);
     });
-    $("#diagram").on("load", function() {
+
+    $(".diagram").on("load", function() {
         var svg = svgElement();
         var startX, startY;
         var onDrag = false;

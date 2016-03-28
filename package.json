@@ -18,6 +18,7 @@
   "homepage": "https://github.com/hirokidaichi/guiflow",
   "dependencies": {
     "electron-debug": "^0.5.2",
+    "flumine": "^0.1.8",
     "uiflow": "^1.1.0"
   },
   "devDependencies": {

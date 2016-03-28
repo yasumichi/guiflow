@@ -1,10 +1,10 @@
 
-body {
-    background-color: #fff;
-    margin: 0;
-    padding : 0;
+.diagram-container svg {
+    width:100%;
+    height:100%;
 }
-.container {
+
+.main {
     overflow : hidden;
     height: 700px;
 }
@@ -19,7 +19,7 @@ body {
     border : 0px;
 }
 .diagram-container {
-    width : 59%;
+    width : 60%;
     height: 100%;
     float: right;
 }
@@ -31,9 +31,7 @@ body {
 }
 #scale {
     float:right;
+    padding-top: 10px;
     padding-right:20px;
 }
-#diagram {
-    width : 100%;
-    height: 100%;
-}
+
