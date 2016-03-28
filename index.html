@@ -12,17 +12,28 @@
 <div class="text-container">
 <div id="text"></div>
 </div>
-<div class="diagram-container">
+<div id="diagram-1" class="diagram-container">
+</div>
+<div id="diagram-2" class="diagram-container">
 </div>
 </div>
 <div class="navigation">
 <div id="scale">
-  <button id="upload"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>
-  <button id="refresh"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
-  <button id="plus"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></button>
-  <button id="minus"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></button>
+  <button id="download" class="btn btn-default"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></button>
+  <button id="refresh" class="btn btn-default"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+  <div class="btn-group" role="group" aria-label="...">
+    <button id="plus" class="btn btn-default">
+      <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+    </button>
+    <button id="flat" class="btn btn-default">
+      <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+    </button>
+    <button id="minus" class="btn btn-default">
+      <span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span>
+    </button>
+  </div>
 </div>
 </div>
-  <span style="position:absolute;top:90%;left:50%;" id="viewBox"></span>
+<span id="viewBox" style="position:absolute;top:96%;left:80%;"> </span>
 </body>
 </html>

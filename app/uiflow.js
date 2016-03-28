@@ -5,7 +5,7 @@ var through2 = require("through2");
 
 var api = module.exports = {};
 
-api.update = function(inputFileName, code, format, outputFileName) {
+api.update = function(inputFileName, code, format) {
     var f = flumine(function(d, ok, ng) {
 
 
@@ -23,7 +23,6 @@ api.update = function(inputFileName, code, format, outputFileName) {
             });
         stream.pipe(output);
         stream.on("end", function() {
-            console.log("build finished", format);
             ok(String(Buffer.concat(buff)));
             output.end();
         });
@@ -31,4 +30,16 @@ api.update = function(inputFileName, code, format, outputFileName) {
 
     });
     return f();
+};
+
+api.compile = function(code) {
+    return flumine.set({
+        svg: flumine.to(function(d) {
+            return api.update("<anon>", code, "svg");
+        }),
+        meta: flumine.to(function(d) {
+            return api.update("<anon>", code, "meta");
+
+        })
+    })();
 };

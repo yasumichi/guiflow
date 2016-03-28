@@ -19,6 +19,7 @@
   "dependencies": {
     "electron-debug": "^0.5.2",
     "flumine": "^0.1.8",
+    "sprintf": "^0.1.5",
     "uiflow": "^1.1.0"
   },
   "devDependencies": {

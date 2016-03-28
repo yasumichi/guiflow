@@ -25,10 +25,10 @@ var waitEditorReady = flumine(function(d, ok, ng) {
         }, 200);
     }
 });
-var fileName;
+var EDITOR_FILE_NAME;
 module.exports = {
     open: waitEditorReady.and(function(fileName, ok, ng) {
-        fileName = fileName;
+        EDITOR_FILE_NAME = fileName;
         fs.readFile(fileName, function(err, cont) {
             if (err) {
                 ng(err);
@@ -38,6 +38,18 @@ module.exports = {
             }
         });
     }),
+    openNewFile: waitEditorReady.and(function() {}),
+    openNewFileWithName: waitEditorReady.and(function() {}),
+    save: waitEditorReady.and(function(d, ok, ng) {
+        var code = editor.getValue();
+        fs.writeFile(EDITOR_FILE_NAME, code, function(err) {
+            if (err)
+                return ng(err);
+            return ok();
+        });
+    }),
+    saveFileWithName: waitEditorReady.and(function() {}),
+
     value: waitEditorReady.and(function() {
         return editor.getValue();
     }),
@@ -65,15 +77,15 @@ module.exports = {
     }),
     onChange: function(cb) {
         waitEditorReady().then(function() {
-            editor.on("change", function() {
-                var code = editor.getValue();
-                if (code.length <= 1) {
-                    return;
+            var PREV = editor.getValue();
+            setInterval(function() {
+                now = editor.getValue();
+                if (PREV !== now) {
+                    PREV = now;
+                    cb(now);
                 }
-                cb(code);
-            });
+            }, 500);
+
         });
     },
-    save: function() {},
-    saveAs: function() {},
 };

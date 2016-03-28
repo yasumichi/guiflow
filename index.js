@@ -1,8 +1,9 @@
+var fs = require("fs");
 var electron = require('electron');
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
 var Menu = electron.Menu;
-
+var dialog = electron.dialog;
 app.on('window-all-closed', function() {
     app.quit();
 });
@@ -25,44 +26,61 @@ var mainMenu = {
         label: 'Toggle Full Screen',
         accelerator: 'Ctrl+Command+F',
         click: function() {
-            mainWindow.setFullScreen(!mainWindow.isFullScreen());
+            var win = BrowserWindow.getFocusedWindow();
+            if (win) {
+                win.setFullScreen(!win.isFullScreen());
+            }
         }
     }]
 };
 var fileMenu = {
-    label: 'ファイル',
+    label: 'File',
     submenu: [{
-        label: '新規ファイルの作成'
+        label: 'New File',
+        click: function() {
+            createWindow();
+        },
     }, {
-        label: '別のファイルを開く'
-    }, {
-        label: "エクスポート"
-    }, ]
-};
+        label: 'Open...',
+        click: function() {
+            dialog.showOpenDialog({
+                properties: ['openFile', 'openDirectory']
+            }, function(fileNames) {
+                createWindow(fileNames[0]);
+            });
+        },
 
-var editMenu = {
-    label: '編集',
-    submenu: [{
-        label: '未指定のページを補完'
+    }, {
+        label: "Save",
+        click: function() {
+            var win = BrowserWindow.getFocusedWindow();
+            if (!win) {
+                return;
+            }
+            win.webContents.send("saveFile");
+        },
+    }, {
+        label: "Save As...",
+        click: function() {
+            var win = BrowserWindow.getFocusedWindow();
+            if (!win) {
+                return;
+            }
+            dialog.showSaveDialog({
+                properties: ['openFile', 'openDirectory']
+            }, function(fileNames) {
+                win.webContents.send("saveFile", fileNames[0]);
+            });
+
+        },
     }]
 };
 
-var debugMenu = {
-    label: 'デバッグ',
+var editMenu = {
+    label: 'Edit',
     submenu: [{
-        label: 'リロード',
-        accelerator: 'Command+R',
-        click: function() {
-            //mainWindow.restart();
-        }
-
-    }, {
-        label: 'Toggle Developer Tools',
-        accelerator: 'Alt+Command+I',
-        click: function() {
-            //mainWindow.toggleDevTools();
-        }
-    }, ]
+        label: '未指定のページを補完'
+    }]
 };
 
 var createWindow = function(fileName) {
@@ -70,7 +88,7 @@ var createWindow = function(fileName) {
     mainWindow = new BrowserWindow({
         width: 1100,
         height: 800,
-        title: "guiflow"
+        title: "guiflow -- " + (fileName ? fileName : "Untitled")
     });
     mainWindow.loadURL('file://' + __dirname + '/index.html');
 
@@ -80,7 +98,7 @@ var createWindow = function(fileName) {
     if (fileName) {
         setTimeout(function() {
             mainWindow.webContents.send("openFile", fileName);
-        }, 500);
+        }, 1000);
     }
     mainWindow.toggleDevTools();
 
@@ -91,8 +109,9 @@ app.on('ready', function() {
     var fileName = process.argv[2];
     //console.log(fileName);
     var builtMenu = Menu.buildFromTemplate([
-        mainMenu, fileMenu, editMenu, debugMenu
+        mainMenu, fileMenu, editMenu
     ]);
     Menu.setApplicationMenu(builtMenu);
     var firstWindow = createWindow(fileName);
+
 });
