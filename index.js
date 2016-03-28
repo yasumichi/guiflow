@@ -2,8 +2,6 @@ var electron = require('electron');
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
 var Menu = electron.Menu;
-var mainWindow = null;
-
 
 app.on('window-all-closed', function() {
     app.quit();
@@ -55,25 +53,20 @@ var debugMenu = {
         label: 'リロード',
         accelerator: 'Command+R',
         click: function() {
-            mainWindow.restart();
+            //mainWindow.restart();
         }
 
     }, {
         label: 'Toggle Developer Tools',
         accelerator: 'Alt+Command+I',
         click: function() {
-            mainWindow.toggleDevTools();
+            //mainWindow.toggleDevTools();
         }
     }, ]
 };
-app.on('ready', function() {
-    var fileName = process.argv[2];
-    //console.log(fileName);
-    var builtMenu = Menu.buildFromTemplate([
-        mainMenu, fileMenu, editMenu, debugMenu
-    ]);
-    Menu.setApplicationMenu(builtMenu);
-    // ブラウザ(Chromium)の起動, 初期画面のロード
+
+var createWindow = function(fileName) {
+    var mainWindow = null;
     mainWindow = new BrowserWindow({
         width: 1100,
         height: 800,
@@ -84,4 +77,22 @@ app.on('ready', function() {
     mainWindow.on('closed', function() {
         mainWindow = null;
     });
+    if (fileName) {
+        setTimeout(function() {
+            mainWindow.webContents.send("openFile", fileName);
+        }, 500);
+    }
+    mainWindow.toggleDevTools();
+
+    return mainWindow;
+};
+
+app.on('ready', function() {
+    var fileName = process.argv[2];
+    //console.log(fileName);
+    var builtMenu = Menu.buildFromTemplate([
+        mainMenu, fileMenu, editMenu, debugMenu
+    ]);
+    Menu.setApplicationMenu(builtMenu);
+    var firstWindow = createWindow(fileName);
 });
