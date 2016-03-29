@@ -1,7 +1,5 @@
 var $ = require("./jquery-2.1.4.min");
 var EventEmitter = require("events");
-var clipboard = require("clipboard");
-var nativeImage = require("native-image");
 var sprintf = require("sprintf");
 var emitter = new EventEmitter();
 var CURRENT_DOC;
@@ -11,23 +9,21 @@ var svgElement = function() {
 var getViewBox = function(svg) {
     return svg[0].getAttribute("viewBox").split(/\s/g).map(parseFloat);
 };
-var imageToClipboard = function(dataUrl, width, height) {
+
+/*var imageToClipboard = function(dataUrl, width, height) {
     var canvas = $("<canvas>", {
         width: 3000,
         height: 3000
     })[0];
-    //var tag = canvas[0];
-    console.log(canvas);
     var ctx = canvas.getContext('2d');
     var img = new Image();
     img.src = dataUrl;
     ctx.drawImage(img, 0, 0, 3000, 3000);
     var image = nativeImage.createFromDataURL(canvas.toDataURL());
-    //console.log(image);
     clipboard.writeImage(image);
     alert("クリップボードにグラフを保存しました。");
 
-};
+};*/
 var VIEW_BOX_VALUES;
 var SCALE = 1.0;
 var DEFAULT_VIEW_BOX = "";
@@ -59,12 +55,7 @@ $(function() {
         viewBoxValues[3] *= 1.2;
         setViewBox(svg, viewBoxValues);
     });
-    $("#download").on("click", function() {
-        console.log("hello");
-        var dataUrl = "data:image/svg+xml," + encodeURIComponent(CURRENT_DOC);
-        imageToClipboard(dataUrl);
-        //alert("copyしました");
-    });
+
 });
 
 var refresh = function(data) {

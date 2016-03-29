@@ -23,10 +23,24 @@ ipcRenderer.on("saveFileWithName", function(e) {
     editor.save();
 });
 
+var clipboard = require("clipboard");
+var nativeImage = require("native-image");
+
 $(function() {
     $(window).on("load resize", function() {
         $(".main").height($(window).height());
     });
+    $("#download").click(function(e) {
+        editor.value.and(function(code) {
+            return uiflow.base64png(code);
+        }).and(function(base64) {
+            var dataUri = "data:image/png;base64," + base64;
+            var image = nativeImage.createFromDataURL(dataUri);
+            clipboard.writeImage(image);
+            alert("クリップボードにコピーしました。");
+        })();
+    });
+
     editor.onChange(function(code) {
         uiflow.compile(code).then(function(data) {
                 editor.clearError();

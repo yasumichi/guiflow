@@ -8,7 +8,6 @@ var api = module.exports = {};
 api.update = function(inputFileName, code, format) {
     var f = flumine(function(d, ok, ng) {
 
-
         var buff = [];
         var output = through2(function(chunk, enc, cb) {
             var svg = chunk;
@@ -16,14 +15,14 @@ api.update = function(inputFileName, code, format) {
             cb();
 
         });
-
         var stream = uiflow.buildWithCode(
             inputFileName, code, format, function(error) {
                 ng(error);
             });
         stream.pipe(output);
         stream.on("end", function() {
-            ok(String(Buffer.concat(buff)));
+            var buffAll = Buffer.concat(buff);
+            ok(buffAll);
             output.end();
         });
 
@@ -32,14 +31,28 @@ api.update = function(inputFileName, code, format) {
     return f();
 };
 
+var stringify = function(buff) {
+    var str = String(buff);
+    //console.log("stringify", str);
+    return str;
+};
+
+var base64nize = function(buff) {
+    return buff.toString("base64");
+};
 api.compile = function(code) {
     return flumine.set({
         svg: flumine.to(function(d) {
             return api.update("<anon>", code, "svg");
-        }),
+        }).to(stringify),
         meta: flumine.to(function(d) {
             return api.update("<anon>", code, "meta");
-
-        })
+        }).to(stringify)
     })();
+};
+
+api.base64png = function(code) {
+    return flumine.to(function() {
+        return api.update("<anon>", code, "png");
+    }).to(base64nize)();
 };
