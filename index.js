@@ -11,20 +11,24 @@ app.on('window-all-closed', function() {
 var mainMenu = {
     label: app.getName(),
     submenu: [{
-        label: 'guiflowについて',
-        accelerator: 'Cmd+Q',
+        label: 'About guiflow',
         click: function() {
-            alert("guiflow -version 0.01");
+            dialog.showMessageBox({
+                type: "info",
+                title: "about guiflow",
+                message: "version : 0.01",
+                buttons: ["close"]
+            });
         }
     }, {
-        label: '終了',
-        accelerator: 'Cmd+Q',
+        label: 'Quit',
+        accelerator: 'CmdOrCtrl+Q',
         click: function() {
             app.quit();
         }
     }, {
         label: 'Toggle Full Screen',
-        accelerator: 'Ctrl+Command+F',
+        accelerator: 'CmdOrCtrl+F',
         click: function() {
             var win = BrowserWindow.getFocusedWindow();
             if (win) {
@@ -37,11 +41,14 @@ var fileMenu = {
     label: 'File',
     submenu: [{
         label: 'New File',
+        accelerator: 'CmdOrCtrl+N',
         click: function() {
             createWindow();
         },
     }, {
         label: 'Open...',
+        accelerator: 'CmdOrCtrl+O',
+
         click: function() {
             dialog.showOpenDialog({
                 properties: ['openFile', 'openDirectory']
@@ -52,6 +59,7 @@ var fileMenu = {
 
     }, {
         label: "Save",
+        accelerator: 'CmdOrCtrl+S',
         click: function() {
             var win = BrowserWindow.getFocusedWindow();
             if (!win) {
@@ -61,6 +69,7 @@ var fileMenu = {
         },
     }, {
         label: "Save As...",
+        accelerator: 'Shift+CmdOrCtrl+S',
         click: function() {
             var win = BrowserWindow.getFocusedWindow();
             if (!win) {
@@ -69,7 +78,7 @@ var fileMenu = {
             dialog.showSaveDialog({
                 properties: ['openFile', 'openDirectory']
             }, function(fileNames) {
-                win.webContents.send("saveFile", fileNames[0]);
+                win.webContents.send("saveFileWithName", fileNames[0]);
             });
 
         },
@@ -100,9 +109,9 @@ var createWindow = function(fileName) {
             mainWindow.webContents.send("openFile", fileName);
         }, 1000);
     }
-    mainWindow.toggleDevTools();
-
-    return mainWindow;
+    if (process.env.DEBUG) {
+        mainWindow.toggleDevTools();
+    }
 };
 
 app.on('ready', function() {
