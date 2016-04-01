@@ -19,8 +19,46 @@ var diagram = require("./js/diagram");
     ipcRenderer.on(channel, editor[channel].listener(2));
 });
 
+var sendToEditor = function(channel) {
+    return editor[channel];
+};
+
 var clipboard = require("clipboard");
 var nativeImage = require("native-image");
+
+var Menu = remote.require('menu');
+var menu = Menu.buildFromTemplate([{
+    label: "Undo",
+    accelerator: 'CmdOrCtrl+Z',
+    click: sendToEditor("undo"),
+}, {
+    label: "Redo",
+    accelerator: 'CmdOrCtrl+Y',
+    click: sendToEditor("redo"),
+}, {
+    type: 'separator'
+}, {
+    label: "Cut",
+    accelerator: 'CmdOrCtrl+X',
+    click: sendToEditor("cut"),
+}, {
+    label: "Copy",
+    accelerator: 'CmdOrCtrl+C',
+    click: sendToEditor("copy"),
+}, {
+    label: "Paste",
+    accelerator: 'CmdOrCtrl+V',
+    click: sendToEditor("paste"),
+}, {
+    label: "Select All",
+    accelerator: 'CmdOrCtrl+A',
+    click: sendToEditor("selectAll"),
+}, ]);
+
+window.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    menu.popup(remote.getCurrentWindow());
+}, false);
 
 $(function() {
     $(window).on("load resize", function() {

@@ -38,6 +38,8 @@ var mainMenu = {
             });
         }
     }, {
+        type: 'separator'
+    }, {
         label: 'Quit',
         accelerator: 'CmdOrCtrl+Q',
         click: function() {
@@ -45,7 +47,7 @@ var mainMenu = {
         }
     }, {
         label: 'Toggle Full Screen',
-        accelerator: 'CmdOrCtrl+F',
+        accelerator: 'F11',
         click: function() {
             var win = BrowserWindow.getFocusedWindow();
             if (win) {
@@ -97,6 +99,8 @@ var editMenu = {
             label: "Redo",
             accelerator: 'CmdOrCtrl+Y',
             click: sendToFocusedBrowser("redo"),
+        }, {
+            type: 'separator'
         }, {
             label: "Cut",
             accelerator: 'CmdOrCtrl+X',

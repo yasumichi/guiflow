@@ -3,6 +3,7 @@ var fs = require("fs");
 var EventEmitter = require('events');
 var flumine = require("flumine");
 var dialog = require('electron').remote.dialog;
+var clipboard = require("clipboard");
 require('ace-min-noconflict');
 require('ace-min-noconflict/theme-monokai');
 
@@ -11,6 +12,7 @@ var EDITOR_FILE_NAME;
 var EDITOR_FILE_VALUE;
 
 var emitter = new EventEmitter();
+
 $(window).on("load", function() {
     editor = ace.edit("text");
     editor.$blockScrolling = Infinity;
@@ -78,6 +80,11 @@ var saveFile = flumine(function(d, ok, ng) {
     });
 
 });
+
+var copy = waitEditorReady.and(function() {
+    var text = editor.getCopyText();
+    clipboard.writeText(text);
+});
 var app = module.exports = {
     open: waitEditorReady.and(function(d, ok, ng) {
         var fileName = d[1];
@@ -100,12 +107,24 @@ var app = module.exports = {
         .and(getFileName(true))
         .and(saveFile),
 
-    undo: waitEditorReady.and(function() {}),
-    redo: waitEditorReady.and(function() {}),
-    cut: waitEditorReady.and(function() {}),
-    copy: waitEditorReady.and(function() {}),
-    paste: waitEditorReady.and(function() {}),
-    selectAll: waitEditorReady.and(function() {}),
+    undo: waitEditorReady.and(function() {
+        editor.undo();
+    }),
+    redo: waitEditorReady.and(function() {
+        editor.redo();
+    }),
+    cut: waitEditorReady.and(copy).and(function(d) {
+        var target = editor.getSelectionRange();
+        editor.getSession().getDocument().remove(target);
+    }),
+    copy: copy,
+    paste: waitEditorReady.and(function() {
+        var text = clipboard.readText();
+        editor.insert(text);
+    }),
+    selectAll: waitEditorReady.and(function() {
+        editor.getSelection().selectAll();
+    }),
     value: waitEditorReady.and(function() {
         return editor.getValue();
     }),
