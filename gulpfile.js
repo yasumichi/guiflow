@@ -10,7 +10,7 @@ gulp.task('clean', function(done) {
     });
 });
 
-gulp.task('package', ['win32', 'darwin', 'linux'].map(function(platform) {
+var packaging = ['win32', 'darwin', 'linux'].map(function(platform) {
     var taskName = 'package:' + platform;
     var distDir = 'dist';
     gulp.task(taskName, function(done) {
@@ -21,11 +21,12 @@ gulp.task('package', ['win32', 'darwin', 'linux'].map(function(platform) {
             platform: platform,
             out: 'package/' + platform,
             version: electronVersion,
-            ignore: /package/,
-            asar: true
+            ignore: "/package($|/)",
+            asar: true,
         }, function(err) {
             done();
         });
     });
     return taskName;
-}));
+});
+gulp.task('package', ['clean'].concat(packaging));
