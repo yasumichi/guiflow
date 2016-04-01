@@ -8,6 +8,8 @@ app.on('window-all-closed', function() {
     app.quit();
 });
 
+var exec = require('child_process').exec;
+
 var warn = function(message) {
     dialog.showMessageBox({
         type: "warning",
@@ -52,6 +54,15 @@ var mainMenu = {
             var win = BrowserWindow.getFocusedWindow();
             if (win) {
                 win.setFullScreen(!win.isFullScreen());
+            }
+        }
+    }, {
+        label: 'Toggle Dev Tool',
+        accelerator: 'F5',
+        click: function() {
+            var win = BrowserWindow.getFocusedWindow();
+            if (win) {
+                win.toggleDevTools();
             }
         }
     }]

@@ -1,10 +1,11 @@
 var $ = require("./js/jquery-2.1.4.min");
 var ipcRenderer = require("electron").ipcRenderer;
 var remote = require("remote");
+var fs = require("fs");
 var uiflow = remote.require("./app/uiflow");
 var editor = require("./js/editor");
 var diagram = require("./js/diagram");
-
+var flumine = require("flumine");
 [
     "open",
     "save",
@@ -60,7 +61,73 @@ window.addEventListener('contextmenu', function(e) {
     menu.popup(remote.getCurrentWindow());
 }, false);
 
+
+//var isEnablePath = flumine.to(uiflow.isEnablePath);
+//var 
+
+var checkPath = flumine.to(function(d, ok, ng) {
+    uiflow.isEnablePath(d).then(function(enable) {
+        if (enable) {
+            ok(d);
+        } else {
+            ng(d);
+        }
+    });
+});
+
+var fromShell = flumine.value("dot").and(checkPath);
+
+var fromUserData = flumine(function(d, ok, ng) {
+    var userDataPath = remote.require("app").getPath("userData");
+    fs.readFile(userDataPath + "/path", function(err, cont) {
+        console.log(err, cont);
+        if (err) {
+            ng(err);
+        } else {
+            ok(String(cont));
+        }
+    });
+}).and(checkPath);
+
+var toUserData = flumine(function(d, ok, ng) {
+    var userDataPath = remote.require("app").getPath("userData");
+    fs.writeFile(userDataPath + "/path", d, function(err) {
+        if (err) {
+            ng(err);
+        } else {
+            ok(d);
+        }
+    });
+});
+var dialogs = require("dialogs")({});
+
+var fromPrompt = flumine(function(d, ok, ng) {
+    dialogs.prompt(
+        "Please enter your 'dot' command path",
+        "/usr/local/bin/dot",
+        function(value) {
+            ok(value);
+        });
+}).and(checkPath);
+
+var untilPrompt = flumine(function(d, ok, ng) {
+    fromPrompt(d).then(ok, function() {
+        dialogs.alert("cannot find", function() {
+            untilPrompt(d).then(ok);
+        })
+    })
+});
+
+
+
 $(function() {
+    var pathResolver = fromShell
+        .or(fromUserData)
+        .or(untilPrompt.and(toUserData))
+        .and(uiflow.changePath);
+
+    pathResolver();
+
     $(window).on("load resize", function() {
         $(".main").height($(window).height());
     });
@@ -78,6 +145,7 @@ $(function() {
     editor.on("change", function(code) {
         uiflow.compile(code).then(function(data) {
                 editor.clearError();
+                console.log(data);
                 return data;
             })
             .then(diagram.refresh)

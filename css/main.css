@@ -26,8 +26,15 @@
 .navigation {
     position:fixed;
     top: 0;
-    left : 50%;
-    width : 50%;
+    left : 41%;
+    width : 60%;
+}
+#path {
+    float:left;
+    width:50%;
+    padding-top: 10px;
+    padding-right:20px;
+
 }
 #scale {
     float:right;
