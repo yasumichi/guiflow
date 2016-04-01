@@ -5,22 +5,18 @@ var uiflow = remote.require("./app/uiflow");
 var editor = require("./js/editor");
 var diagram = require("./js/diagram");
 
-ipcRenderer.on("openFile", function(e, v) {
-    editor.open(v);
-});
-ipcRenderer.on("openNewFile", function(e, v) {
-    editor.openNewFile(v);
-});
-ipcRenderer.on("openNewFileWithName", function(e, v) {
-    editor.openNewFile(v);
-});
-ipcRenderer.on("saveFile", function(e) {
-    console.log("save");
-    editor.save();
-});
-ipcRenderer.on("saveFileWithName", function(e) {
-    console.log(arguments);
-    editor.save();
+[
+    "open",
+    "save",
+    "saveAs",
+    "undo",
+    "redo",
+    "cut",
+    "copy",
+    "paste",
+    "selectAll"
+].forEach(function(channel) {
+    ipcRenderer.on(channel, editor[channel].listener(2));
 });
 
 var clipboard = require("clipboard");
@@ -37,17 +33,23 @@ $(function() {
             var dataUri = "data:image/png;base64," + base64;
             var image = nativeImage.createFromDataURL(dataUri);
             clipboard.writeImage(image);
-            alert("クリップボードにコピーしました。");
+            alert("Copied Image to Clipboard");
         })();
     });
 
-    editor.onChange(function(code) {
+    editor.on("change", function(code) {
         uiflow.compile(code).then(function(data) {
                 editor.clearError();
                 return data;
             })
             .then(diagram.refresh)
             .catch(editor.setError);
+    });
+    editor.on("same", function(fileName) {
+        document.title = "guiflow -- " + (fileName || "Untitled") + " = ";
+    });
+    editor.on("diff", function(fileName) {
+        document.title = "guiflow -- " + (fileName || "Untitled") + " + ";
     });
     diagram.on("page-click", function(lines) {
         editor.navigateTo(lines);

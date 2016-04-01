@@ -8,6 +8,23 @@ app.on('window-all-closed', function() {
     app.quit();
 });
 
+var warn = function(message) {
+    dialog.showMessageBox({
+        type: "warning",
+        title: "warning",
+        message: message,
+        buttons: ["close"]
+    });
+};
+var sendToFocusedBrowser = function(channel) {
+    return function() {
+        var win = BrowserWindow.getFocusedWindow();
+        if (!win) {
+            return warn("no selected window");
+        }
+        win.webContents.send(channel);
+    };
+};
 var mainMenu = {
     label: app.getName(),
     submenu: [{
@@ -48,48 +65,57 @@ var fileMenu = {
     }, {
         label: 'Open...',
         accelerator: 'CmdOrCtrl+O',
-
         click: function() {
             dialog.showOpenDialog({
                 properties: ['openFile', 'openDirectory']
             }, function(fileNames) {
-                createWindow(fileNames[0]);
+                if (fileNames) {
+                    createWindow(fileNames[0]);
+                }
             });
         },
 
     }, {
         label: "Save",
         accelerator: 'CmdOrCtrl+S',
-        click: function() {
-            var win = BrowserWindow.getFocusedWindow();
-            if (!win) {
-                return;
-            }
-            win.webContents.send("saveFile");
-        },
+        onlyFocusedWindow: true,
+        click: sendToFocusedBrowser("save"),
     }, {
         label: "Save As...",
         accelerator: 'Shift+CmdOrCtrl+S',
-        click: function() {
-            var win = BrowserWindow.getFocusedWindow();
-            if (!win) {
-                return;
-            }
-            dialog.showSaveDialog({
-                properties: ['openFile', 'openDirectory']
-            }, function(fileNames) {
-                win.webContents.send("saveFileWithName", fileNames[0]);
-            });
-
-        },
+        click: sendToFocusedBrowser("saveAs"),
     }]
 };
 
 var editMenu = {
     label: 'Edit',
     submenu: [{
-        label: '未指定のページを補完'
-    }]
+            label: "Undo",
+            accelerator: 'CmdOrCtrl+Z',
+            click: sendToFocusedBrowser("undo"),
+        }, {
+            label: "Redo",
+            accelerator: 'CmdOrCtrl+Y',
+            click: sendToFocusedBrowser("redo"),
+        }, {
+            label: "Cut",
+            accelerator: 'CmdOrCtrl+X',
+            click: sendToFocusedBrowser("cut"),
+        }, {
+            label: "Copy",
+            accelerator: 'CmdOrCtrl+C',
+            click: sendToFocusedBrowser("copy"),
+        }, {
+            label: "Paste",
+            accelerator: 'CmdOrCtrl+V',
+            click: sendToFocusedBrowser("paste"),
+        }, {
+            label: "Select All",
+            accelerator: 'CmdOrCtrl+A',
+            click: sendToFocusedBrowser("selectAll"),
+        },
+
+    ]
 };
 
 var createWindow = function(fileName) {
@@ -106,7 +132,7 @@ var createWindow = function(fileName) {
     });
     if (fileName) {
         setTimeout(function() {
-            mainWindow.webContents.send("openFile", fileName);
+            mainWindow.webContents.send("open", fileName);
         }, 1000);
     }
     if (process.env.DEBUG) {
@@ -116,10 +142,11 @@ var createWindow = function(fileName) {
 
 app.on('ready', function() {
     var fileName = process.argv[2];
-    //console.log(fileName);
     var builtMenu = Menu.buildFromTemplate([
         mainMenu, fileMenu, editMenu
     ]);
+    app.on("browser-window-blur", function() {});
+    app.on("browser-window-focus", function() {});
     Menu.setApplicationMenu(builtMenu);
     var firstWindow = createWindow(fileName);
 

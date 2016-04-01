@@ -4,7 +4,9 @@
   "description": "a text editor",
   "main": "index.js",
   "scripts": {
-    "exec": "node_modules/.bin/electron ."
+    "start": "DEBUG=true $(npm bin)/electron .",
+    "clean": "$(npm bin)/gulp clean",
+    "package": "$(npm bin)/gulp package"
   },
   "repository": {
     "type": "git",
@@ -20,11 +22,14 @@
     "electron-debug": "^0.5.2",
     "flumine": "^0.1.8",
     "sprintf": "^0.1.5",
-    "uiflow": "^1.1.0"
+    "uiflow": "^1.1.1"
   },
   "devDependencies": {
     "ace-min-noconflict": "^1.1.9",
-    "electron-packager": "^5.2.1",
-    "electron-prebuilt": "^0.36.9"
+    "del": "^2.2.0",
+    "electron-packager": "^6.0.0",
+    "electron-prebuilt": "^0.36.9",
+    "gulp": "^3.9.1",
+    "gulp-zip": "^3.2.0"
   }
 }

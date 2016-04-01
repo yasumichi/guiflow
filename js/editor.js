@@ -2,15 +2,35 @@ var $ = require("./jquery-2.1.4.min");
 var fs = require("fs");
 var EventEmitter = require('events');
 var flumine = require("flumine");
-
+var dialog = require('electron').remote.dialog;
 require('ace-min-noconflict');
 require('ace-min-noconflict/theme-monokai');
 
 var editor;
+var EDITOR_FILE_NAME;
+var EDITOR_FILE_VALUE;
+
+var emitter = new EventEmitter();
 $(window).on("load", function() {
     editor = ace.edit("text");
     editor.$blockScrolling = Infinity;
     editor.setTheme("ace/theme/monokai");
+    setInterval(function() {
+        if (editor.getValue() !== EDITOR_FILE_VALUE) {
+            emitter.emit("diff", EDITOR_FILE_NAME);
+        } else {
+            emitter.emit("same", EDITOR_FILE_NAME);
+        }
+    }, 1000);
+    var PREV = editor.getValue();
+    setInterval(function() {
+        now = editor.getValue();
+        if (PREV !== now) {
+            PREV = now;
+            emitter.emit("change", now);
+        }
+    }, 500);
+
 });
 
 var waitEditorReady = flumine(function(d, ok, ng) {
@@ -25,31 +45,67 @@ var waitEditorReady = flumine(function(d, ok, ng) {
         }, 200);
     }
 });
-var EDITOR_FILE_NAME;
-module.exports = {
-    open: waitEditorReady.and(function(fileName, ok, ng) {
+
+var getFileName = function(forceDialog) {
+    return flumine(function(d, ok, ng) {
+        if (!forceDialog && EDITOR_FILE_NAME) {
+            return ok(EDITOR_FILE_NAME);
+        } else {
+            dialog.showSaveDialog({
+                title: "save file"
+            }, function(fileName) {
+                if (fileName) {
+                    ok(fileName);
+                } else {
+                    ok();
+                }
+            });
+        }
+    });
+}
+
+var saveFile = flumine(function(d, ok, ng) {
+    if (!d) {
+        return ok("canceled");
+    }
+    var code = editor.getValue();
+    fs.writeFile(d, code, function(err) {
+        if (err)
+            return ng(err);
+        EDITOR_FILE_NAME = d;
+        EDITOR_FILE_VALUE = code;
+        return ok(d);
+    });
+
+});
+var app = module.exports = {
+    open: waitEditorReady.and(function(d, ok, ng) {
+        var fileName = d[1];
         EDITOR_FILE_NAME = fileName;
         fs.readFile(fileName, function(err, cont) {
             if (err) {
                 ng(err);
             } else {
-                editor.setValue(String(cont));
+                var code = String(cont);
+                EDITOR_FILE_VALUE = code;
+                editor.setValue(code);
                 ok(cont);
             }
         });
     }),
-    openNewFile: waitEditorReady.and(function() {}),
-    openNewFileWithName: waitEditorReady.and(function() {}),
-    save: waitEditorReady.and(function(d, ok, ng) {
-        var code = editor.getValue();
-        fs.writeFile(EDITOR_FILE_NAME, code, function(err) {
-            if (err)
-                return ng(err);
-            return ok();
-        });
-    }),
-    saveFileWithName: waitEditorReady.and(function() {}),
+    save: waitEditorReady
+        .and(getFileName(false))
+        .and(saveFile),
+    saveAs: waitEditorReady
+        .and(getFileName(true))
+        .and(saveFile),
 
+    undo: waitEditorReady.and(function() {}),
+    redo: waitEditorReady.and(function() {}),
+    cut: waitEditorReady.and(function() {}),
+    copy: waitEditorReady.and(function() {}),
+    paste: waitEditorReady.and(function() {}),
+    selectAll: waitEditorReady.and(function() {}),
     value: waitEditorReady.and(function() {
         return editor.getValue();
     }),
@@ -75,17 +131,8 @@ module.exports = {
     insert: waitEditorReady.through(function(d) {
         editor.setValue(editor.getValue() + d);
     }),
-    onChange: function(cb) {
-        waitEditorReady().then(function() {
-            var PREV = editor.getValue();
-            setInterval(function() {
-                now = editor.getValue();
-                if (PREV !== now) {
-                    PREV = now;
-                    cb(now);
-                }
-            }, 500);
-
-        });
+    on: function(channel, cb) {
+        emitter.on(channel, cb);
     },
+
 };
