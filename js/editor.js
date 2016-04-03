@@ -16,6 +16,9 @@ var emitter = new EventEmitter();
 $(window).on("load", function() {
     editor = ace.edit("text");
     editor.$blockScrolling = Infinity;
+    if (process.platform === "darwin") {
+        editor.commands.bindKey("Ctrl-P", "golineup");
+    }
     editor.setTheme("ace/theme/monokai");
     setInterval(function() {
         if (editor.getValue() !== EDITOR_FILE_VALUE) {
