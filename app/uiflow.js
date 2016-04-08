@@ -33,7 +33,6 @@ api.update = function(inputFileName, code, format) {
 
 var stringify = function(buff) {
     var str = String(buff);
-    //console.log("stringify", str);
     return str;
 };
 
@@ -56,32 +55,3 @@ api.base64png = function(code) {
         return api.update("<anon>", code, "png");
     }).to(base64nize)();
 };
-
-api.changePath = function(path) {
-    uiflow.DOT_PATH = path;
-};
-
-var spawn = require("child_process").spawn;
-
-api.isEnablePath = flumine(function(path, ok, ng) {
-
-    var child = spawn(path, ["-v"]);
-    var r = "";
-    child.on("error", function() {
-        ok(false);
-    });
-    child.stderr.on("data", function(c) {
-        r += String(c);
-    });
-    child.stderr.on("close", function() {
-        if (r.match(/^dot -/)) {
-            ok(true);
-        } else {
-            ok(false);
-        }
-    });
-    setTimeout(function() {
-        child.kill('SIGHUP');
-    }, 50);
-
-});
