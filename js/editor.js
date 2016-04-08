@@ -99,6 +99,8 @@ var app = module.exports = {
                 var code = String(cont);
                 EDITOR_FILE_VALUE = code;
                 editor.setValue(code);
+                editor.navigateLineEnd();
+                editor.focus();
                 ok(cont);
             }
         });
@@ -152,6 +154,8 @@ var app = module.exports = {
     }),
     insert: waitEditorReady.through(function(d) {
         editor.setValue(editor.getValue() + d);
+        editor.navigateLineEnd();
+        editor.focus();
     }),
     on: function(channel, cb) {
         emitter.on(channel, cb);
