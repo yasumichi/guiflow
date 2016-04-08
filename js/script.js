@@ -90,7 +90,7 @@ $(function() {
             var png = cElement.toDataURL("image/png");
 
             var image = nativeImage.createFromDataURL(png);
-
+            clipboard.writeImage(image);
 
             alert("Copied Image to Clipboard");
         })();
