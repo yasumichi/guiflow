@@ -18,7 +18,7 @@ gulp.task("package:win32", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
-        out: 'package/' + platform,
+        out: 'package/',
         version: electronVersion,
         icon: "icon/guiflow.ico",
         ignore: "/package($|/)",
@@ -38,7 +38,7 @@ gulp.task("package:linux", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
-        out: 'package/' + platform,
+        out: 'package/',
         version: electronVersion,
         ignore: "/package($|/)",
         asar: true,
@@ -55,7 +55,7 @@ gulp.task("package:darwin", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
-        out: 'package/' + platform,
+        out: 'package/',
         version: electronVersion,
         ignore: "/package($|/)",
         icon: "icon/gui_flow_icon.icons",
@@ -64,6 +64,7 @@ gulp.task("package:darwin", function(done) {
         done();
     });
 });
+
 gulp.task('package', function(cb) {
     runseq(
         'clean', [
