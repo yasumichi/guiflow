@@ -18,7 +18,11 @@ gulp.task("package:win32", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
+<<<<<<< HEAD
         out: 'package/',
+=======
+        out: 'package/' + platform,
+>>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
         version: electronVersion,
         icon: "icon/guiflow.ico",
         ignore: "/package($|/)",
@@ -38,7 +42,11 @@ gulp.task("package:linux", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
+<<<<<<< HEAD
         out: 'package/',
+=======
+        out: 'package/' + platform,
+>>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
         version: electronVersion,
         ignore: "/package($|/)",
         asar: true,
@@ -55,6 +63,7 @@ gulp.task("package:darwin", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
+<<<<<<< HEAD
         out: 'package/',
         version: electronVersion,
         ignore: "/package($|/)",
@@ -74,6 +83,8 @@ gulp.task("package:darwin", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
+=======
+>>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
         out: 'package/' + platform,
         version: electronVersion,
         ignore: "/package($|/)",
