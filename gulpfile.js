@@ -65,6 +65,24 @@ gulp.task("package:darwin", function(done) {
     });
 });
 
+
+
+gulp.task("package:darwin", function(done) {
+    var platform = "darwin";
+    return packager({
+        dir: '.',
+        name: '',
+        arch: 'x64',
+        platform: platform,
+        out: 'package/' + platform,
+        version: electronVersion,
+        ignore: "/package($|/)",
+        icon: "icon/gui_flow_icon.icons",
+        asar: true,
+    }, function(err) {
+        done();
+    });
+});
 gulp.task('package', function(cb) {
     runseq(
         'clean', [
