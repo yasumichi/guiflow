@@ -19,7 +19,11 @@ gulp.task("package:win32", function(done) {
         arch: 'x64',
         platform: platform,
 <<<<<<< HEAD
+<<<<<<< HEAD
         out: 'package/',
+=======
+        out: 'package/' + platform,
+>>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
 =======
         out: 'package/' + platform,
 >>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
@@ -43,7 +47,11 @@ gulp.task("package:linux", function(done) {
         arch: 'x64',
         platform: platform,
 <<<<<<< HEAD
+<<<<<<< HEAD
         out: 'package/',
+=======
+        out: 'package/' + platform,
+>>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
 =======
         out: 'package/' + platform,
 >>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
@@ -64,6 +72,7 @@ gulp.task("package:darwin", function(done) {
         arch: 'x64',
         platform: platform,
 <<<<<<< HEAD
+<<<<<<< HEAD
         out: 'package/',
         version: electronVersion,
         ignore: "/package($|/)",
@@ -83,6 +92,8 @@ gulp.task("package:darwin", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
+=======
+>>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
 =======
 >>>>>>> 075862538e77e9088747a97e5d80a9295dbc307d
         out: 'package/' + platform,
