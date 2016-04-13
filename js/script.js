@@ -1,9 +1,12 @@
 //process.env.NODE_PATH = "./";
 if (process.platform == "win32") {
     //modulePaths.push();
-    var p = process.resourcesPath + "\\app.asar";
+    var p = process.resourcesPath; //+ "\\app";
     console.log(p);
-    module.paths.push(p);
+    module.paths.unshift(p + "\\app");
+    module.paths.unshift(p + "\\app.asar");
+    module.paths.unshift(p + "\\app\\node_modules");
+    module.paths.unshift(p + "\\app.asar\\node_modules");
 }
 var resolvePath = function(p) {
     if (process.platform == "win32") {
@@ -11,6 +14,14 @@ var resolvePath = function(p) {
     } else {
         return p;
     }
+};
+var nodeModule = function() {
+    if (process.platform == "win32") {
+        return "node_modules/" + p;
+    } else {
+        return p;
+    }
+
 };
 var ipcRenderer = require("electron").ipcRenderer;
 var remote = require("remote");
