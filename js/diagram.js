@@ -70,7 +70,7 @@ var refresh = function(data) {
         $(this).find("ellipse").attr("stroke-width", "4");
     });
     svg.find("g.node").on("click", function(e) {
-        var text = $(this).find("title").text();
+        var text = $(this).find("title").text().trim();
         if ($(this).find("ellipse").length === 0) {
             var lines = metaData[text].lines;
             emitter.emit("page-click", lines);

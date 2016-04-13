@@ -24,6 +24,9 @@ gulp.task("package:win32", function(done) {
         ignore: "/package($|/)",
         asar: true,
     }, function(err) {
+        if (err) {
+            console.error(err);
+        }
         done();
     });
 });

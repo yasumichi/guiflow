@@ -1,11 +1,26 @@
-var $ = require("./js/jquery-2.1.4.min");
+//process.env.NODE_PATH = "./";
+if (process.platform == "win32") {
+    //modulePaths.push();
+    var p = process.resourcesPath + "\\app.asar";
+    console.log(p);
+    module.paths.push(p);
+}
+var resolvePath = function(p) {
+    if (process.platform == "win32") {
+        return p.replace(/^\.\//, '');
+    } else {
+        return p;
+    }
+};
 var ipcRenderer = require("electron").ipcRenderer;
 var remote = require("remote");
 var fs = require("fs");
-var uiflow = remote.require("./app/uiflow");
-var editor = require("./js/editor");
-var diagram = require("./js/diagram");
 var flumine = require("flumine");
+var $ = require(resolvePath("./js/jquery-2.1.4.min"));
+var uiflow = remote.require("./app/uiflow");
+var editor = require(resolvePath("./js/editor"));
+var diagram = require(resolvePath("./js/diagram"));
+
 [
     "open",
     "save",
@@ -86,6 +101,8 @@ $(function() {
             cElement.width = width * 2;
             cElement.height = height * 2;
             var cContext = cElement.getContext("2d");
+            cContext.fillStyle = "#fff";
+            cContext.fillRect(-10, -10, width * 3, height * 3);
             cContext.drawImage(image, 0, 0, width * 2, height * 2);
             var png = cElement.toDataURL("image/png");
 
