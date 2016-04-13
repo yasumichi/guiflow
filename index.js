@@ -80,7 +80,12 @@ var fileMenu = {
         accelerator: 'CmdOrCtrl+O',
         click: function() {
             dialog.showOpenDialog({
-                properties: ['openFile', 'openDirectory']
+                defaultPath: app.getPath('userDesktop'),
+                properties: ['openFile'],
+                filters: [{
+                    name: 'Documents',
+                    extensions: ['txt', 'md', 'text']
+                }, ],
             }, function(fileNames) {
                 if (fileNames) {
                     createWindow(fileNames[0]);

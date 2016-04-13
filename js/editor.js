@@ -57,7 +57,11 @@ var getFileName = function(forceDialog) {
             return ok(EDITOR_FILE_NAME);
         } else {
             dialog.showSaveDialog({
-                title: "save file"
+                title: "save file",
+                filters: [{
+                    name: 'Documents',
+                    extensions: ['txt', 'md', 'text']
+                }, ],
             }, function(fileName) {
                 if (fileName) {
                     ok(fileName);
