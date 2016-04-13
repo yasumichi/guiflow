@@ -33,6 +33,7 @@
     "electron-packager": "^6.0.0",
     "electron-prebuilt": "^0.36.9",
     "gulp": "^3.9.1",
+    "gulp-shell": "^0.5.2",
     "gulp-zip": "^3.2.0",
     "run-sequence": "^1.1.5"
   }

@@ -18,7 +18,7 @@ gulp.task("package:win32", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
-        out: 'package/',
+        out: 'package/' + platform,
         version: electronVersion,
         icon: "icon/guiflow.ico",
         ignore: "/package($|/)",
@@ -38,7 +38,7 @@ gulp.task("package:linux", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
-        out: 'package/',
+        out: 'package/' + platform,
         version: electronVersion,
         ignore: "/package($|/)",
         asar: true,
@@ -55,7 +55,7 @@ gulp.task("package:darwin", function(done) {
         name: '',
         arch: 'x64',
         platform: platform,
-        out: 'package/',
+        out: 'package/' + platform,
         version: electronVersion,
         ignore: "/package($|/)",
         icon: "icon/gui_flow_icon.icons",
@@ -83,8 +83,27 @@ gulp.task("package:darwin", function(done) {
         done();
     });
 });
+var shell = require('gulp-shell');
 
+gulp.task("zip:darwin", shell.task([
+    "echo hello",
+    "zip -r guiflow-darwin.zip guiflow-darwin-x64"
+], {
+    cwd: "./package/darwin/"
+}));
+gulp.task("zip:win32", shell.task([
+    "echo hello",
+    "zip -r guiflow-win32.zip guiflow-win32-x64"
+], {
+    cwd: "./package/win32/"
+}));
 
+gulp.task("zip:linux", shell.task([
+    "echo hello",
+    "zip -r guiflow-linux.zip guiflow-linux-x64"
+], {
+    cwd: "./package/linux/"
+}));
 gulp.task('package', function(cb) {
     runseq(
         'clean', [
