@@ -20,6 +20,7 @@ gulp.task("package:win32", function(done) {
         platform: platform,
         out: 'package/' + platform,
         version: electronVersion,
+        icon: "icon/guiflow.ico",
         ignore: "/package($|/)",
         asar: true,
     }, function(err) {
